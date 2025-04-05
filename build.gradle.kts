@@ -23,6 +23,8 @@ extra["springShellVersion"] = "3.4.0"
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.shell:spring-shell-starter")
+
+	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.shell:spring-shell-starter-test")
