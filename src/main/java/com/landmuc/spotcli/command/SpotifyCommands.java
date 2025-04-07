@@ -1,4 +1,4 @@
-package com.landmuc.spotcli.commands;
+package com.landmuc.spotcli.command;
 
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
