@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.landmuc.spotcli.client.SpotifyApiClient;
+import com.landmuc.spotcli.model.SpotifyBearerToken;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
@@ -20,6 +21,10 @@ public class SpotifyService {
 
   public Mono<UserProfileResponse> getCurrentUserProfile() {
     return spotifyApiClient.getCurrentUserProfile();
+  }
+
+  public Mono<SpotifyBearerToken> getBearerToken() {
+    return spotifyApiClient.getBearerToken();
   }
 
 }
