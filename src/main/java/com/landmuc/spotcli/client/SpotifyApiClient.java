@@ -8,12 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.SpotifyBearerToken;
-import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
 
-// WebClient Wrapper for Spotify
 @Component
 @PropertySource("classpath:application-local.properties")
 public class SpotifyApiClient {
@@ -31,18 +30,8 @@ public class SpotifyApiClient {
     this.spotifyApi = spotifyApi;
   }
 
-  public Mono<UserProfileResponse> getCurrentUserProfile() {
-    return spotifyApi
-        .get()
-        .uri("/v1/me")
-        .accept(MediaType.APPLICATION_JSON)
-        .retrieve()
-        .bodyToMono(UserProfileResponse.class);
-  }
-
   public Mono<SpotifyBearerToken> getBearerToken() {
-    return spotifyApi
-        .post()
+    return spotifyApi.post()
         .uri("https://accounts.spotify.com/api/token")
         .contentType(MediaType.APPLICATION_FORM_URLENCODED) // sets the content type to
                                                             // application/x-www-form-urlencoded
@@ -50,6 +39,15 @@ public class SpotifyApiClient {
         .bodyValue("grant_type=client_credentials")
         .retrieve()
         .bodyToMono(SpotifyBearerToken.class);
+  }
+
+  public Mono<ArtistResponse> getArtistById(String artistId) {
+    return getBearerToken()
+        .flatMap(token -> spotifyApi.get()
+                .uri("https://api.spotify.com/v1/artists/{id}", artistId)
+            .headers(headers -> headers.setBearerAuth(token.access_token()))
+            .retrieve()
+            .bodyToMono(ArtistResponse.class));
   }
 
 }

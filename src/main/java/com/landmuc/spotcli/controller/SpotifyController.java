@@ -3,12 +3,13 @@ package com.landmuc.spotcli.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.SpotifyBearerToken;
-import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
 import reactor.core.publisher.Mono;
@@ -24,13 +25,14 @@ public class SpotifyController {
     this.spotifyService = spotifyService;
   }
 
-  @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<UserProfileResponse> getCurrentUserProfile() {
-    return spotifyService.getCurrentUserProfile();
-  }
-
   @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<SpotifyBearerToken> getBearerToken() {
     return spotifyService.getBearerToken();
   }
+
+  @GetMapping(value = "/artists/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ArtistResponse> getArtistById(@PathVariable String artistId) {
+    return spotifyService.getArtistById(artistId);
+  }
+
 }
