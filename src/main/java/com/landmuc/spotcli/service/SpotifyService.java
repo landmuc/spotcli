@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.landmuc.spotcli.client.SpotifyApiClient;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -25,6 +26,10 @@ public class SpotifyService {
 
   public Mono<ArtistResponse> getArtistById(String artistId) {
     return spotifyApiClient.getArtistById(artistId);
+  }
+
+  public Mono<UserProfileResponse> getCurrentUserInformation() {
+    return spotifyApiClient.getCurrentUserInformation();
   }
 
 }

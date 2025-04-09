@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
 import reactor.core.publisher.Mono;
@@ -33,6 +34,11 @@ public class SpotifyController {
   @GetMapping(value = "/artists/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ArtistResponse> getArtistById(@PathVariable String artistId) {
     return spotifyService.getArtistById(artistId);
+  }
+
+  @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<UserProfileResponse> getCurrentUserInformation() {
+    return spotifyService.getCurrentUserInformation();
   }
 
 }

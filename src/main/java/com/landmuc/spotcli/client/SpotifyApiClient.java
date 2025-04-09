@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -44,10 +45,19 @@ public class SpotifyApiClient {
   public Mono<ArtistResponse> getArtistById(String artistId) {
     return getBearerToken()
         .flatMap(token -> spotifyApi.get()
-                .uri("https://api.spotify.com/v1/artists/{id}", artistId)
+            .uri("https://api.spotify.com/v1/artists/{id}", artistId)
             .headers(headers -> headers.setBearerAuth(token.access_token()))
             .retrieve()
             .bodyToMono(ArtistResponse.class));
+  }
+
+  public Mono<UserProfileResponse> getCurrentUserInformation() {
+    return getBearerToken()
+        .flatMap(token -> spotifyApi.get()
+            .uri("https://api.spotify.com/v1/me")
+            .headers(headers -> headers.setBearerAuth(token.access_token()))
+            .retrieve()
+            .bodyToMono(UserProfileResponse.class));
   }
 
 }
