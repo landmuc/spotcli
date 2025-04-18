@@ -32,4 +32,8 @@ public class SpotifyService {
     return spotifyApiClient.getCurrentUserInformation();
   }
 
+  public void getNextTrack() {
+    spotifyApiClient.getNextTrack();
+  }
+
 }

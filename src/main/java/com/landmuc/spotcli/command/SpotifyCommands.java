@@ -29,9 +29,10 @@ public class SpotifyCommands {
     return spotifyController.getBearerToken().block();
   }
 
-  @ShellMethod(key = "authorization", value = "Authorize on Spotify")
-  public void authorization() {
-    spotifyAuthController.getUserAuthorization();
+  @ShellMethod(key = "authorize", value = "Get Spotify authorization URL")
+  public String authorize() {
+    return "Please visit this URL to authorize: "
+        + spotifyAuthController.getUserAuthorization().getHeaders().getLocation();
   }
 
   @ShellMethod(key = "artist", value = "Get artist by id")
@@ -42,6 +43,12 @@ public class SpotifyCommands {
   @ShellMethod(key = "user", value = "Get current user information")
   public UserProfileResponse user() {
     return spotifyController.getCurrentUserInformation().block();
+  }
+
+  @ShellMethod(key = "next_track", value = "Play next track")
+  public String next_track() {
+    spotifyController.getNextTrack();
+    return "Playing next track...";
   }
 
 }

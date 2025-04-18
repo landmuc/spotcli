@@ -35,9 +35,14 @@ public class SpotifyController {
     return spotifyService.getArtistById(artistId);
   }
 
-  @GetMapping(value = "/user")
+  @GetMapping("/user")
   public Mono<UserProfileResponse> getCurrentUserInformation() {
     return spotifyService.getCurrentUserInformation();
+  }
+
+  @PostMapping("/next-track")
+  public void getNextTrack() {
+    spotifyService.getNextTrack();
   }
 
 }

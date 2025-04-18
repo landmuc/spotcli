@@ -64,4 +64,12 @@ public class SpotifyApiClient {
         .bodyToMono(UserProfileResponse.class);
   }
 
+  public void getNextTrack() {
+    spotifyWebClient.post()
+        .uri("https://api.spotify.com/v1/me/player/next")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(void.class);
+  }
+
 }
