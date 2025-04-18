@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
-import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
@@ -24,27 +24,27 @@ public class SpotifyApiClient {
   @Value("${spring.security.oauth2.client.registration.spotify.client-secret}")
   private String clientSecret;
 
-  private final WebClient spotifyApi;
+  private final WebClient spotifyWebClient;
 
   @Autowired
-  SpotifyApiClient(@Qualifier("spotifyWebClient") WebClient spotifyApi) {
-    this.spotifyApi = spotifyApi;
+  SpotifyApiClient(@Qualifier("spotifyWebClient") WebClient spotifyWebClient) {
+    this.spotifyWebClient = spotifyWebClient;
   }
 
-  public Mono<SpotifyBearerToken> getBearerToken() {
-    return spotifyApi.post()
+  public Mono<BearerTokenResponse> getBearerToken() {
+    return spotifyWebClient.post()
         .uri("https://accounts.spotify.com/api/token")
         .contentType(MediaType.APPLICATION_FORM_URLENCODED) // sets the content type to
                                                             // application/x-www-form-urlencoded
         .headers(headers -> headers.setBasicAuth(clientId, clientSecret))
         .bodyValue("grant_type=client_credentials")
         .retrieve()
-        .bodyToMono(SpotifyBearerToken.class);
+        .bodyToMono(BearerTokenResponse.class);
   }
 
   public Mono<ArtistResponse> getArtistById(String artistId) {
     return getBearerToken()
-        .flatMap(token -> spotifyApi.get()
+        .flatMap(token -> spotifyWebClient.get()
             .uri("https://api.spotify.com/v1/artists/{id}", artistId)
             .headers(headers -> headers.setBearerAuth(token.access_token()))
             .retrieve()
@@ -53,7 +53,7 @@ public class SpotifyApiClient {
 
   public Mono<UserProfileResponse> getCurrentUserInformation() {
     return getBearerToken()
-        .flatMap(token -> spotifyApi.get()
+        .flatMap(token -> spotifyWebClient.get()
             .uri("https://api.spotify.com/v1/me")
             .headers(headers -> headers.setBearerAuth(token.access_token()))
             .retrieve()

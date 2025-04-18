@@ -5,7 +5,7 @@ import org.springframework.shell.standard.ShellMethod;
 
 import com.landmuc.spotcli.controller.SpotifyController;
 import com.landmuc.spotcli.model.ArtistResponse;
-import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import org.springframework.shell.standard.ShellOption;
@@ -20,7 +20,7 @@ public class SpotifyCommands {
   }
 
   @ShellMethod(key = "token", value = "Get Bearer token")
-  public SpotifyBearerToken token() {
+  public BearerTokenResponse token() {
     return spotifyController.getBearerToken().block();
   }
 

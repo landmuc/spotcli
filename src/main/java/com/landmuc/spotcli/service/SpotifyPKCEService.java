@@ -26,20 +26,4 @@ public class SpotifyPKCEService {
     return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
   }
 
-  /**
-   * Validates that a received code verifier matches the original code challenge
-   * that was sent during authorization request.
-   */
-  // public boolean validateCodeVerifier(String codeVerifier, String
-  // codeChallenge) {
-  // try {
-  // String derivedCodeChallenge = generateCodeChallenge(codeVerifier);
-  //
-  // return derivedCodeChallenge.equals(codeChallenge);
-  // } catch (NoSuchAlgorithmException e) {
-  //
-  // return false;
-  // }
-  // }
-
 }

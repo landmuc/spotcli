@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
-import com.landmuc.spotcli.model.SpotifyBearerToken;
+import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
@@ -27,7 +27,7 @@ public class SpotifyController {
   }
 
   @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<SpotifyBearerToken> getBearerToken() {
+  public Mono<BearerTokenResponse> getBearerToken() {
     return spotifyService.getBearerToken();
   }
 

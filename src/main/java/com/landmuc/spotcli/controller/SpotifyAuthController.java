@@ -10,16 +10,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.landmuc.spotcli.service.SpotifyAuthService;
+import com.landmuc.spotcli.client.SpotifyApiAuthClient;
+
+import com.landmuc.spotcli.model.AccessTokenResponse;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/auth")
 public class SpotifyAuthController {
 
-  private SpotifyAuthService spotifyAuthService;
+  private final SpotifyAuthService spotifyAuthService;
+  private final SpotifyApiAuthClient spotifyApiAuthClient;
 
   @Autowired
-  public SpotifyAuthController(SpotifyAuthService spotifyAuthService) {
+  public SpotifyAuthController(SpotifyAuthService spotifyAuthService, SpotifyApiAuthClient spotifyApiAuthClient) {
     this.spotifyAuthService = spotifyAuthService;
+    this.spotifyApiAuthClient = spotifyApiAuthClient;
   }
 
   // Location header + HttpsStatus.NotFound creates a redirect to the authUrl
@@ -31,9 +38,11 @@ public class SpotifyAuthController {
     return new ResponseEntity<>(headers, HttpStatus.FOUND);
   }
 
+  // gets called through getUserAuthorization()
+  // RequestParam extracts the value "code" from the URL and assigns it to the
+  // "code" parameter
   @GetMapping("/auth-redirect")
-  public String handleAuthRedirect(@RequestParam("code") String code) {
-    // TODO: Handle the authorization code
-    return "Authorization code received: " + code;
+  public Mono<AccessTokenResponse> handleAuthRedirect(@RequestParam("code") String code) {
+    return spotifyApiAuthClient.getAccessToken(code);
   }
 }
