@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.service.AccessTokenService;
 
 import reactor.core.publisher.Mono;
 
@@ -25,10 +26,14 @@ public class SpotifyApiClient {
   private String clientSecret;
 
   private final WebClient spotifyWebClient;
+  private final AccessTokenService accessTokenService;
 
   @Autowired
-  SpotifyApiClient(@Qualifier("spotifyWebClient") WebClient spotifyWebClient) {
+  SpotifyApiClient(
+      @Qualifier("spotifyWebClient") WebClient spotifyWebClient,
+      AccessTokenService accessTokenService) {
     this.spotifyWebClient = spotifyWebClient;
+    this.accessTokenService = accessTokenService;
   }
 
   public Mono<BearerTokenResponse> getBearerToken() {
@@ -52,12 +57,11 @@ public class SpotifyApiClient {
   }
 
   public Mono<UserProfileResponse> getCurrentUserInformation() {
-    return getBearerToken()
-        .flatMap(token -> spotifyWebClient.get()
-            .uri("https://api.spotify.com/v1/me")
-            .headers(headers -> headers.setBearerAuth(token.access_token()))
-            .retrieve()
-            .bodyToMono(UserProfileResponse.class));
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(UserProfileResponse.class);
   }
 
 }

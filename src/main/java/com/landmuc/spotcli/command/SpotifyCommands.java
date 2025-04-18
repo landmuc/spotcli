@@ -3,6 +3,7 @@ package com.landmuc.spotcli.command;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import com.landmuc.spotcli.controller.SpotifyAuthController;
 import com.landmuc.spotcli.controller.SpotifyController;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
@@ -14,14 +15,23 @@ import org.springframework.shell.standard.ShellOption;
 public class SpotifyCommands {
 
   private final SpotifyController spotifyController;
+  private final SpotifyAuthController spotifyAuthController;
 
-  SpotifyCommands(SpotifyController spotifyController) {
+  SpotifyCommands(
+      SpotifyController spotifyController,
+      SpotifyAuthController spotifyAuthController) {
     this.spotifyController = spotifyController;
+    this.spotifyAuthController = spotifyAuthController;
   }
 
   @ShellMethod(key = "token", value = "Get Bearer token")
   public BearerTokenResponse token() {
     return spotifyController.getBearerToken().block();
+  }
+
+  @ShellMethod(key = "authorization", value = "Authorize on Spotify")
+  public void authorization() {
+    spotifyAuthController.getUserAuthorization();
   }
 
   @ShellMethod(key = "artist", value = "Get artist by id")

@@ -9,13 +9,19 @@ import com.landmuc.spotcli.client.SpotifyApiAuthClient;
 public class SpotifyAuthService {
 
   private SpotifyApiAuthClient spotifyApiAuthClient;
+  private AccessTokenService accessTokenService;
 
   @Autowired
-  public SpotifyAuthService(SpotifyApiAuthClient spotifyApiAuthClient) {
+  public SpotifyAuthService(SpotifyApiAuthClient spotifyApiAuthClient, AccessTokenService accessTokenService) {
     this.spotifyApiAuthClient = spotifyApiAuthClient;
+    this.accessTokenService = accessTokenService;
   }
 
   public String getAuthorizationUrl() {
     return spotifyApiAuthClient.getAuthorizationUrl();
+  }
+
+  public void getAccessToken(String code) {
+    accessTokenService.setAccessTokenResponse(spotifyApiAuthClient.getAccessToken(code).block());
   }
 }
