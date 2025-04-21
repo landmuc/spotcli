@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +41,29 @@ public class SpotifyController {
     return spotifyService.getCurrentUserInformation();
   }
 
-  @PostMapping("/next-track")
+  @GetMapping("/devices")
+  public Mono<String> getAvailableDevices() {
+    return spotifyService.getAvailableDevices();
+  }
+
+  @GetMapping("/playback")
+  public Mono<String> getPlaybackState() {
+    return spotifyService.getPlaybackState();
+  }
+
+  @GetMapping("/current-track")
+  public Mono<String> getCurrentlyPlayingTrack() {
+    return spotifyService.getCurrentlyPlayingTrack();
+  }
+
+  @GetMapping("/pause-current-track")
+  public void pauseCurrentlyPlayingTrack() {
+    spotifyService.pauseCurrentlyPlayingTrack();
+  }
+
+  // Should be a @PostMapping but for testing in browser needs to be @GetMapping;
+  // but currently doesn't work either way
+  @GetMapping("/next-track")
   public void getNextTrack() {
     spotifyService.getNextTrack();
   }

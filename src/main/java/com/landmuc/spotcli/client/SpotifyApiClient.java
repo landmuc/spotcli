@@ -25,6 +25,9 @@ public class SpotifyApiClient {
   @Value("${spring.security.oauth2.client.registration.spotify.client-secret}")
   private String clientSecret;
 
+  @Value("${spring.security.oauth2.client.registration.spotify.device-id}")
+  private String deviceId;
+
   private final WebClient spotifyWebClient;
   private final AccessTokenService accessTokenService;
 
@@ -64,12 +67,56 @@ public class SpotifyApiClient {
         .bodyToMono(UserProfileResponse.class);
   }
 
-  public void getNextTrack() {
-    spotifyWebClient.post()
-        .uri("https://api.spotify.com/v1/me/player/next")
+  public Mono<String> getAvailableDevices() {
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me/player/devices")
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
-        .bodyToMono(void.class);
+        .bodyToMono(String.class);
+  }
+
+  public Mono<String> getPlaybackState() {
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me/player")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(String.class);
+  }
+
+  public Mono<String> getCurrentlyPlayingTrack() {
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me/player/currently-playing")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(String.class);
+  }
+
+  public void pauseCurrentlyPlayingTrack() {
+    spotifyWebClient.put()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/pause")
+            .queryParam("device_id", deviceId)
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
+  }
+
+  public void getNextTrack() {
+    spotifyWebClient.post()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/next")
+            .queryParam("device_id", deviceId)
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
   }
 
 }

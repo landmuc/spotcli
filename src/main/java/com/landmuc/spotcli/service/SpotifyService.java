@@ -32,6 +32,22 @@ public class SpotifyService {
     return spotifyApiClient.getCurrentUserInformation();
   }
 
+  public Mono<String> getAvailableDevices() {
+    return spotifyApiClient.getAvailableDevices();
+  }
+
+  public Mono<String> getPlaybackState() {
+    return spotifyApiClient.getPlaybackState();
+  }
+
+  public Mono<String> getCurrentlyPlayingTrack() {
+    return spotifyApiClient.getCurrentlyPlayingTrack();
+  }
+
+  public void pauseCurrentlyPlayingTrack() {
+    spotifyApiClient.pauseCurrentlyPlayingTrack();
+  }
+
   public void getNextTrack() {
     spotifyApiClient.getNextTrack();
   }
