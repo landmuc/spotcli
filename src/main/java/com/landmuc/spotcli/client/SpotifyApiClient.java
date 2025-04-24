@@ -10,8 +10,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
+import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.AccessTokenService;
+import com.landmuc.spotcli.service.DeviceIdService;
 
 import reactor.core.publisher.Mono;
 
@@ -25,18 +27,18 @@ public class SpotifyApiClient {
   @Value("${spring.security.oauth2.client.registration.spotify.client-secret}")
   private String clientSecret;
 
-  @Value("${spring.security.oauth2.client.registration.spotify.device-id}")
-  private String deviceId;
-
   private final WebClient spotifyWebClient;
   private final AccessTokenService accessTokenService;
+  private final DeviceIdService deviceIdService;
 
   @Autowired
   SpotifyApiClient(
       @Qualifier("spotifyWebClient") WebClient spotifyWebClient,
-      AccessTokenService accessTokenService) {
+      AccessTokenService accessTokenService,
+      DeviceIdService deviceIdService) {
     this.spotifyWebClient = spotifyWebClient;
     this.accessTokenService = accessTokenService;
+    this.deviceIdService = deviceIdService;
   }
 
   public Mono<BearerTokenResponse> getBearerToken() {
@@ -67,12 +69,12 @@ public class SpotifyApiClient {
         .bodyToMono(UserProfileResponse.class);
   }
 
-  public Mono<String> getAvailableDevices() {
+  public Mono<DeviceListResponse> getAvailableDevices() {
     return spotifyWebClient.get()
         .uri("https://api.spotify.com/v1/me/player/devices")
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
-        .bodyToMono(String.class);
+        .bodyToMono(DeviceListResponse.class);
   }
 
   public Mono<String> getPlaybackState() {
@@ -97,7 +99,7 @@ public class SpotifyApiClient {
             .scheme("https")
             .host("api.spotify.com")
             .path("/v1/me/player/pause")
-            .queryParam("device_id", deviceId)
+            .queryParam("device_id", deviceIdService.getDeviceId())
             .build())
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
@@ -111,7 +113,7 @@ public class SpotifyApiClient {
             .scheme("https")
             .host("api.spotify.com")
             .path("/v1/me/player/next")
-            .queryParam("device_id", deviceId)
+            .queryParam("device_id", deviceIdService.getDeviceId())
             .build())
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()

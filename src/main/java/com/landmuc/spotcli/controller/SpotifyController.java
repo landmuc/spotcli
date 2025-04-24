@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
+import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
@@ -42,7 +43,7 @@ public class SpotifyController {
   }
 
   @GetMapping("/devices")
-  public Mono<String> getAvailableDevices() {
+  public DeviceListResponse getAvailableDevices() {
     return spotifyService.getAvailableDevices();
   }
 
