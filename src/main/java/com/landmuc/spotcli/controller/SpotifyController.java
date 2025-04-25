@@ -64,7 +64,7 @@ public class SpotifyController {
 
   // Should be a @PostMapping but for testing in browser needs to be @GetMapping;
   // but currently doesn't work either way
-  @GetMapping("/next-track")
+  @PutMapping("/next-track")
   public void getNextTrack() {
     spotifyService.getNextTrack();
   }

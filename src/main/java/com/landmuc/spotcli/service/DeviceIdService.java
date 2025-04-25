@@ -5,8 +5,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 @Service
-@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-// @Scope("singleton")
+// @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope("singleton")
 public class DeviceIdService {
   private String deviceId;
 

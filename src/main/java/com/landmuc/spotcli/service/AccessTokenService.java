@@ -11,9 +11,9 @@ import com.landmuc.spotcli.model.AccessTokenResponse;
 // without @Scope Spring would create a new instance of AccessTokenService for every request which would have a access token of null
 // and we would not be authorized to make the request.
 @Service
-@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS) // need
+// @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS) // need
 // spring-boot-starter-web impl for this to
-// @Scope("singleton") // work
+@Scope("singleton") // work
 public class AccessTokenService {
   private AccessTokenResponse accessTokenResponse;
 
