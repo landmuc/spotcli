@@ -116,7 +116,6 @@ public class SpotifyApiAuthClient {
   public Mono<BearerTokenResponse> getBearerToken() {
     return spotifyWebClient.post()
         .uri("https://accounts.spotify.com/api/token")
-        // sets the content type to application/x-www-form-urlencoded
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .headers(headers -> headers.setBasicAuth(clientId, clientSecret))
         .bodyValue("grant_type=client_credentials")
