@@ -9,7 +9,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.landmuc.spotcli.model.AccessTokenResponse;
 import com.landmuc.spotcli.service.SpotifyAuthService;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,8 +38,8 @@ public class SpotifyAuthController {
   // RequestParam extracts the value "code" from the URL and assigns it to the
   // "code" parameter
   @GetMapping("/auth-redirect")
-  public void handleAuthRedirect(@RequestParam("code") String code) {
-    spotifyAuthService.getAccessToken(code);
+  public Mono<AccessTokenResponse> handleAuthRedirect(@RequestParam("code") String code) {
+    return spotifyAuthService.getAccessToken(code);
   }
 
 }

@@ -43,7 +43,7 @@ public class SpotifyController {
   }
 
   @GetMapping("/devices")
-  public DeviceListResponse getAvailableDevices() {
+  public Mono<DeviceListResponse> getAvailableDevices() {
     return spotifyService.getAvailableDevices();
   }
 

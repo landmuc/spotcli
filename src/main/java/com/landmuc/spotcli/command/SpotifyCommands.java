@@ -9,6 +9,7 @@ import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.service.SpotifyService;
 
 import org.springframework.shell.standard.ShellOption;
 
@@ -38,7 +39,7 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "devices", value = "Get available devices")
   public DeviceListResponse getAvailableDevices() {
-    return spotifyController.getAvailableDevices();
+    return spotifyController.getAvailableDevices().block();
   }
 
   @ShellMethod(key = "artist", value = "Get artist by id")

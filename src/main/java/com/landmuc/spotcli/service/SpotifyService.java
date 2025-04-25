@@ -1,7 +1,5 @@
 package com.landmuc.spotcli.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +7,6 @@ import com.landmuc.spotcli.client.SpotifyApiClient;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.DeviceListResponse;
-import com.landmuc.spotcli.model.DeviceResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
@@ -37,11 +34,14 @@ public class SpotifyService {
     return spotifyApiClient.getCurrentUserInformation();
   }
 
-  public DeviceListResponse getAvailableDevices() {
-    DeviceListResponse deviceListResponse = spotifyApiClient.getAvailableDevices().block();
-    List<DeviceResponse> deviceList = deviceListResponse.devices();
-    deviceIdService.setDeviceId(deviceList.getFirst().id());
-    return deviceListResponse;
+  public Mono<DeviceListResponse> getAvailableDevices() {
+    return spotifyApiClient.getAvailableDevices()
+        .filter(deviceListResponse -> !deviceListResponse.devices().isEmpty())
+        .doOnNext(deviceListResponse -> {
+          deviceIdService.setDeviceId(deviceListResponse.devices().getFirst().id());
+        })
+        .switchIfEmpty(Mono.error(new RuntimeException("Device list is empty")));
+
   }
 
   public Mono<String> getPlaybackState() {
