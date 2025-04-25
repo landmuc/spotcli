@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.landmuc.spotcli.client.SpotifyApiAuthClient;
 import com.landmuc.spotcli.model.AccessTokenResponse;
+import com.landmuc.spotcli.model.BearerTokenResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -34,5 +35,10 @@ public class SpotifyAuthService {
           accessTokenService.setAccessTokenResponse(accessTokenResponse);
         })
         .switchIfEmpty(Mono.error(new RuntimeException("Access token could not be retrieved")));
+  }
+
+  // is not needed if authorization via access token is always used
+  public Mono<BearerTokenResponse> getBearerToken() {
+    return spotifyApiAuthClient.getBearerToken();
   }
 }

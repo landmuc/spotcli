@@ -18,6 +18,7 @@ import com.landmuc.spotcli.service.SpotifyPKCEService;
 import com.landmuc.spotcli.service.CodeVerifierService;
 
 import com.landmuc.spotcli.model.AccessTokenResponse;
+import com.landmuc.spotcli.model.BearerTokenResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -97,6 +98,17 @@ public class SpotifyApiAuthClient {
         .queryParam("code_challenge", codeChallenge)
         .build()
         .toUriString();
+  }
+
+  public Mono<BearerTokenResponse> getBearerToken() {
+    return spotifyWebClient.post()
+        .uri("https://accounts.spotify.com/api/token")
+        // sets the content type to application/x-www-form-urlencoded
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        .headers(headers -> headers.setBasicAuth(clientId, clientSecret))
+        .bodyValue("grant_type=client_credentials")
+        .retrieve()
+        .bodyToMono(BearerTokenResponse.class);
   }
 
 }
