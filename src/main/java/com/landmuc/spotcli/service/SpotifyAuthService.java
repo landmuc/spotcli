@@ -42,8 +42,8 @@ public class SpotifyAuthService {
         .switchIfEmpty(Mono.error(new RuntimeException("Access token could not be retrieved")));
   }
 
-  public Mono<DeviceListResponse> getAvailableDevices() {
-    return spotifyApiAuthClient.getAvailableDevices()
+  public Mono<DeviceListResponse> getDeviceId() {
+    return spotifyApiAuthClient.getDeviceId()
         .filter(deviceListResponse -> !deviceListResponse.devices().isEmpty())
         .doOnNext(deviceListResponse -> {
           deviceIdService.setDeviceId(deviceListResponse.devices().getFirst().id());

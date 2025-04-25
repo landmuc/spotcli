@@ -7,7 +7,6 @@ import com.landmuc.spotcli.controller.SpotifyAuthController;
 import com.landmuc.spotcli.controller.SpotifyController;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
-import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import org.springframework.shell.standard.ShellOption;
@@ -34,11 +33,6 @@ public class SpotifyCommands {
   public String authorize() {
     return "Please visit this URL to authorize: "
         + spotifyAuthController.getUserAuthorization().getHeaders().getLocation();
-  }
-
-  @ShellMethod(key = "devices", value = "Get available devices")
-  public DeviceListResponse getAvailableDevices() {
-    return spotifyAuthController.getAvailableDevices().block();
   }
 
   @ShellMethod(key = "artist", value = "Get artist by id")

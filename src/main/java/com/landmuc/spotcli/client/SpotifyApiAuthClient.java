@@ -105,7 +105,7 @@ public class SpotifyApiAuthClient {
         .toUriString();
   }
 
-  public Mono<DeviceListResponse> getAvailableDevices() {
+  public Mono<DeviceListResponse> getDeviceId() {
     return spotifyWebClient.get()
         .uri("https://api.spotify.com/v1/me/player/devices")
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))

@@ -10,9 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.landmuc.spotcli.model.AccessTokenResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
-import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.service.SpotifyAuthService;
 
 import reactor.core.publisher.Mono;
@@ -40,14 +38,12 @@ public class SpotifyAuthController {
   // gets called through getUserAuthorization()
   // RequestParam extracts the value "code" from the URL and assigns it to the
   // "code" parameter
+  // Also call getDeviceId() to get the needed device id directly with the
+  // authorization
   @GetMapping("/auth-redirect")
-  public Mono<AccessTokenResponse> handleAuthRedirect(@RequestParam("code") String code) {
-    return spotifyAuthService.getAccessToken(code);
-  }
-
-  @GetMapping("/devices")
-  public Mono<DeviceListResponse> getAvailableDevices() {
-    return spotifyAuthService.getAvailableDevices();
+  public void handleAuthRedirect(@RequestParam("code") String code) {
+    spotifyAuthService.getAccessToken(code).block();
+    spotifyAuthService.getDeviceId().block();
   }
 
   @PostMapping("/token")
