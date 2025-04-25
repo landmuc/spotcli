@@ -35,11 +35,6 @@ public class SpotifyController {
     return spotifyService.getCurrentUserInformation();
   }
 
-  @GetMapping("/devices")
-  public Mono<DeviceListResponse> getAvailableDevices() {
-    return spotifyService.getAvailableDevices();
-  }
-
   @GetMapping("/playback")
   public Mono<String> getPlaybackState() {
     return spotifyService.getPlaybackState();

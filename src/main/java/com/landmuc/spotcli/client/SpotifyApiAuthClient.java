@@ -15,10 +15,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.landmuc.spotcli.service.SpotifyPKCEService;
+import com.landmuc.spotcli.service.AccessTokenService;
 import com.landmuc.spotcli.service.CodeVerifierService;
 
 import com.landmuc.spotcli.model.AccessTokenResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
+import com.landmuc.spotcli.model.DeviceListResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -43,14 +45,17 @@ public class SpotifyApiAuthClient {
   private final WebClient spotifyWebClient;
   private final SpotifyPKCEService spotifyPKCEService;
   private final CodeVerifierService codeVerifierService;
+  private final AccessTokenService accessTokenService;
 
   @Autowired
   SpotifyApiAuthClient(@Qualifier("spotifyWebClient") WebClient spotifyWebClient,
       SpotifyPKCEService spotifyPKCEService,
-      CodeVerifierService codeVerifierService) {
+      CodeVerifierService codeVerifierService,
+      AccessTokenService accessTokenService) {
     this.spotifyWebClient = spotifyWebClient;
     this.spotifyPKCEService = spotifyPKCEService;
     this.codeVerifierService = codeVerifierService;
+    this.accessTokenService = accessTokenService;
   }
 
   public Mono<AccessTokenResponse> getAccessToken(String code) {
@@ -98,6 +103,14 @@ public class SpotifyApiAuthClient {
         .queryParam("code_challenge", codeChallenge)
         .build()
         .toUriString();
+  }
+
+  public Mono<DeviceListResponse> getAvailableDevices() {
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me/player/devices")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(DeviceListResponse.class);
   }
 
   public Mono<BearerTokenResponse> getBearerToken() {

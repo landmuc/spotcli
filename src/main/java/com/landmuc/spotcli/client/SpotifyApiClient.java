@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
-import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.AccessTokenService;
 import com.landmuc.spotcli.service.DeviceIdService;
@@ -58,14 +57,6 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(UserProfileResponse.class);
-  }
-
-  public Mono<DeviceListResponse> getAvailableDevices() {
-    return spotifyWebClient.get()
-        .uri("https://api.spotify.com/v1/me/player/devices")
-        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
-        .retrieve()
-        .bodyToMono(DeviceListResponse.class);
   }
 
   public Mono<String> getPlaybackState() {

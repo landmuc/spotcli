@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.landmuc.spotcli.model.AccessTokenResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
+import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.service.SpotifyAuthService;
 
 import reactor.core.publisher.Mono;
@@ -42,6 +43,11 @@ public class SpotifyAuthController {
   @GetMapping("/auth-redirect")
   public Mono<AccessTokenResponse> handleAuthRedirect(@RequestParam("code") String code) {
     return spotifyAuthService.getAccessToken(code);
+  }
+
+  @GetMapping("/devices")
+  public Mono<DeviceListResponse> getAvailableDevices() {
+    return spotifyAuthService.getAvailableDevices();
   }
 
   @PostMapping("/token")

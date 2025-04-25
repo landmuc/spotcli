@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.landmuc.spotcli.client.SpotifyApiAuthClient;
 import com.landmuc.spotcli.model.AccessTokenResponse;
 import com.landmuc.spotcli.model.BearerTokenResponse;
+import com.landmuc.spotcli.model.DeviceListResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -14,11 +15,15 @@ public class SpotifyAuthService {
 
   private SpotifyApiAuthClient spotifyApiAuthClient;
   private AccessTokenService accessTokenService;
+  private DeviceIdService deviceIdService;
 
   @Autowired
-  public SpotifyAuthService(SpotifyApiAuthClient spotifyApiAuthClient, AccessTokenService accessTokenService) {
+  public SpotifyAuthService(SpotifyApiAuthClient spotifyApiAuthClient,
+      AccessTokenService accessTokenService,
+      DeviceIdService deviceIdService) {
     this.spotifyApiAuthClient = spotifyApiAuthClient;
     this.accessTokenService = accessTokenService;
+    this.deviceIdService = deviceIdService;
   }
 
   public String getAuthorizationUrl() {
@@ -35,6 +40,16 @@ public class SpotifyAuthService {
           accessTokenService.setAccessTokenResponse(accessTokenResponse);
         })
         .switchIfEmpty(Mono.error(new RuntimeException("Access token could not be retrieved")));
+  }
+
+  public Mono<DeviceListResponse> getAvailableDevices() {
+    return spotifyApiAuthClient.getAvailableDevices()
+        .filter(deviceListResponse -> !deviceListResponse.devices().isEmpty())
+        .doOnNext(deviceListResponse -> {
+          deviceIdService.setDeviceId(deviceListResponse.devices().getFirst().id());
+        })
+        .switchIfEmpty(Mono.error(new RuntimeException("Device list is empty")));
+
   }
 
   // is not needed if authorization via access token is always used

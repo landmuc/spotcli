@@ -38,7 +38,7 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "devices", value = "Get available devices")
   public DeviceListResponse getAvailableDevices() {
-    return spotifyController.getAvailableDevices().block();
+    return spotifyAuthController.getAvailableDevices().block();
   }
 
   @ShellMethod(key = "artist", value = "Get artist by id")
