@@ -6,8 +6,8 @@ public class TimeConverter {
     long totalSeconds = milliseconds / 1000;
     long seconds = totalSeconds % 60;
     long minutes = (totalSeconds / 60) % 60;
-    long hours = totalSeconds / 3600;
+    // long hours = totalSeconds / 3600;
 
-    return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    return String.format("%02d:%02d", minutes, seconds);
   }
 }

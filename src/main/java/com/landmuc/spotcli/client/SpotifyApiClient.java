@@ -11,6 +11,7 @@ import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.PlaybackStateResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.model.UsersQueueResponse;
 import com.landmuc.spotcli.service.AccessTokenService;
 import com.landmuc.spotcli.service.DeviceIdService;
 import com.landmuc.spotcli.service.SpotifyAuthService;
@@ -75,6 +76,14 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(CurrentlyPlayingTrackResponse.class);
+  }
+
+  public Mono<UsersQueueResponse> getUsersQueue() {
+    return spotifyWebClient.get()
+        .uri("https://api.spotify.com/v1/me/player/queue")
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(UsersQueueResponse.class);
   }
 
   public void pauseCurrentlyPlayingTrack() {

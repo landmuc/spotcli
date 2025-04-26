@@ -8,6 +8,7 @@ import com.landmuc.spotcli.domain.DelayedResponseHandler;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.model.UsersQueueResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
 import reactor.core.publisher.Mono;
@@ -49,6 +50,13 @@ public class SpotifyCommands {
     CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
 
     return currentTrack == null ? "No track playing right now!" : "Playing: " + currentTrack.toString();
+  }
+
+  @ShellMethod(key = "q", value = "Get users track queue")
+  public String getUsersQueue() {
+    UsersQueueResponse usersQueueResponse = spotifyService.getUsersQueue().block();
+
+    return usersQueueResponse.toString();
   }
 
   @ShellMethod(key = "p", value = "Pause current track")

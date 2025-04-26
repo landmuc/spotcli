@@ -8,6 +8,7 @@ import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.PlaybackStateResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.model.UsersQueueResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -34,6 +35,10 @@ public class SpotifyService {
 
   public Mono<CurrentlyPlayingTrackResponse> getCurrentlyPlayingTrack() {
     return spotifyApiClient.getCurrentlyPlayingTrack();
+  }
+
+  public Mono<UsersQueueResponse> getUsersQueue() {
+    return spotifyApiClient.getUsersQueue();
   }
 
   public void pauseCurrentlyPlayingTrack() {

@@ -7,13 +7,10 @@ import com.landmuc.spotcli.domain.TimeConverter;
 
 public record CurrentlyPlayingTrackResponse(
     int progress_ms,
-    ItemResponse item) {
+    TrackResponse item) {
 
   @Override
   public String toString() {
-    if (item() == null) {
-      return "No track is currently playing.";
-    }
     int trackNumber = item().track_number();
     String trackName = item().name();
     String albumName = item().album().name();
@@ -28,6 +25,8 @@ public record CurrentlyPlayingTrackResponse(
         trackNumber, trackName, albumName, artistsName, progress, duration);
   }
 
+  // override equals() to only compare TrackResponse.id() because progress_ms
+  // could be different for every state and cause problems
   @Override
   public boolean equals(Object obj) {
     // this == obj checks if the two objects being compared are actually the same
@@ -47,7 +46,7 @@ public record CurrentlyPlayingTrackResponse(
     if (item == null || other.item == null)
       return false;
 
-    // Compare only the IDs of the ItemResponse objects
+    // Compare only the IDs of the TrackResponse objects
     return Objects.equals(item.id(), other.item.id());
   }
 
