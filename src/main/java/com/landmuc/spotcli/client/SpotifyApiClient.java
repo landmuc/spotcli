@@ -132,4 +132,19 @@ public class SpotifyApiClient {
         .subscribe();
   }
 
+  public void setPlaybackVolume(int volumePercent) {
+    spotifyWebClient.put()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/volume")
+            .queryParam("device_id", deviceIdService.getDeviceId())
+            .queryParam("volume_percent", volumePercent)
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
+  }
+
 }

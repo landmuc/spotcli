@@ -51,4 +51,8 @@ public class SpotifyService {
     spotifyApiClient.getPreviousTrack();
   }
 
+  public void setPlaybackVolume(int volumePercent) {
+    spotifyApiClient.setPlaybackVolume(volumePercent);
+  }
+
 }

@@ -3,13 +3,13 @@ package com.landmuc.spotcli.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
-import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
@@ -58,14 +58,19 @@ public class SpotifyController {
 
   // Should be a @PostMapping but for testing in browser needs to be @GetMapping;
   // but currently doesn't work either way
-  @PutMapping("/next-track")
+  @PostMapping("/next-track")
   public void getNextTrack() {
     spotifyService.getNextTrack();
   }
 
-  @PutMapping("/previous-track")
+  @PostMapping("/previous-track")
   public void getPreviousTrack() {
     spotifyService.getPreviousTrack();
+  }
+
+  @PutMapping("/set-volume")
+  public void setPlaybackVolume(int volumePercent) {
+    spotifyService.setPlaybackVolume(volumePercent);
   }
 
 }

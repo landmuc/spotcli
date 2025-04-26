@@ -91,4 +91,11 @@ public class SpotifyCommands {
 
     return previousTrack == null ? "No track playing right now!" : "Starting: " + previousTrack.toString();
   }
+
+  @ShellMethod(key = "v", value = "Set volume in percent 0 - 100%")
+  public String setPlaybackVolume(int volumePercent) {
+    spotifyController.setPlaybackVolume(volumePercent);
+
+    return String.format("Volume: %d%%", volumePercent);
+  }
 }
