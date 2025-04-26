@@ -6,7 +6,6 @@ import org.springframework.shell.standard.ShellMethod;
 import com.landmuc.spotcli.controller.SpotifyAuthController;
 import com.landmuc.spotcli.controller.SpotifyController;
 import com.landmuc.spotcli.model.ArtistResponse;
-import com.landmuc.spotcli.model.BearerTokenResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import org.springframework.shell.standard.ShellOption;
@@ -22,11 +21,6 @@ public class SpotifyCommands {
       SpotifyAuthController spotifyAuthController) {
     this.spotifyController = spotifyController;
     this.spotifyAuthController = spotifyAuthController;
-  }
-
-  @ShellMethod(key = "token", value = "Get Bearer token")
-  public BearerTokenResponse token() {
-    return spotifyAuthController.getBearerToken().block();
   }
 
   @ShellMethod(key = "authorize", value = "Get Spotify authorization URL")
@@ -45,10 +39,16 @@ public class SpotifyCommands {
     return spotifyController.getCurrentUserInformation().block();
   }
 
-  @ShellMethod(key = "next_track", value = "Play next track")
-  public String next_track() {
+  @ShellMethod(key = "nt", value = "Play next track")
+  public String nextTrack() {
     spotifyController.getNextTrack();
     return "Playing next track...";
+  }
+
+  @ShellMethod(key = "p", value = "Pause current track")
+  public String pauseCurrentlyPlayingTrack() {
+    spotifyController.pauseCurrentlyPlayingTrack();
+    return "Pausing current track...";
   }
 
 }

@@ -1,4 +1,4 @@
-package com.landmuc.spotcli.config;
+package com.landmuc.spotcli.webconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
