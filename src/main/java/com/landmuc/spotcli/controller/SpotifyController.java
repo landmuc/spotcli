@@ -15,6 +15,9 @@ import com.landmuc.spotcli.service.SpotifyService;
 
 import reactor.core.publisher.Mono;
 
+//
+// Leaving it in here for now if I want to test the app via browser/curl/postman whatever
+//
 @RestController
 @RequestMapping("/api/spotify")
 public class SpotifyController {
@@ -66,11 +69,6 @@ public class SpotifyController {
   @PostMapping("/previous-track")
   public void getPreviousTrack() {
     spotifyService.getPreviousTrack();
-  }
-
-  @PutMapping("/set-volume")
-  public void setPlaybackVolume(int volumePercent) {
-    spotifyService.setPlaybackVolume(volumePercent);
   }
 
 }

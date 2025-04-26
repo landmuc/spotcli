@@ -4,11 +4,11 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
 import com.landmuc.spotcli.controller.SpotifyAuthController;
-import com.landmuc.spotcli.controller.SpotifyController;
 import com.landmuc.spotcli.domain.DelayedResponseHandler;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
+import com.landmuc.spotcli.service.SpotifyService;
 
 import reactor.core.publisher.Mono;
 
@@ -17,14 +17,15 @@ import org.springframework.shell.standard.ShellOption;
 @ShellComponent
 public class SpotifyCommands {
 
-  private final SpotifyController spotifyController;
   private final SpotifyAuthController spotifyAuthController;
 
-  SpotifyCommands(
-      SpotifyController spotifyController,
-      SpotifyAuthController spotifyAuthController) {
-    this.spotifyController = spotifyController;
+  private final SpotifyService spotifyService;
+
+  public SpotifyCommands(
+      SpotifyAuthController spotifyAuthController,
+      SpotifyService spotifyService) {
     this.spotifyAuthController = spotifyAuthController;
+    this.spotifyService = spotifyService;
   }
 
   @ShellMethod(key = "authorize", value = "Get Spotify authorization URL")
@@ -35,25 +36,25 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "artist", value = "Get artist by id")
   public ArtistResponse artist(@ShellOption("Spotify artist id") String artistId) {
-    return spotifyController.getArtistById(artistId).block();
+    return spotifyService.getArtistById(artistId).block();
   }
 
   @ShellMethod(key = "user", value = "Get current user information")
   public UserProfileResponse user() {
-    return spotifyController.getCurrentUserInformation().block();
+    return spotifyService.getCurrentUserInformation().block();
   }
 
   @ShellMethod(key = "t", value = "Get current playing track")
   public String getCurrentlyPlayingTrack() {
-    CurrentlyPlayingTrackResponse currentTrack = spotifyController.getCurrentlyPlayingTrack().block();
+    CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
 
     return currentTrack == null ? "No track playing right now!" : "Playing: " + currentTrack.toString();
   }
 
   @ShellMethod(key = "p", value = "Pause current track")
   public String pauseCurrentlyPlayingTrack() {
-    spotifyController.pauseCurrentlyPlayingTrack();
-    CurrentlyPlayingTrackResponse currentTrack = spotifyController.getCurrentlyPlayingTrack().block();
+    spotifyService.pauseCurrentlyPlayingTrack();
+    CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
 
     return currentTrack == null ? "No track playing right now!" : "Pausing: " + currentTrack.toString();
 
@@ -61,8 +62,8 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "s", value = "Start or resume current track")
   public String resumeCurrentTrack() {
-    spotifyController.resumeCurrentTrack();
-    CurrentlyPlayingTrackResponse currentTrack = spotifyController.getCurrentlyPlayingTrack().block();
+    spotifyService.resumeCurrentTrack();
+    CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
 
     return currentTrack == null ? "No track playing right now!" : "Starting: " + currentTrack.toString();
 
@@ -70,9 +71,9 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "nt", value = "Play next track")
   public String nextTrack() {
-    CurrentlyPlayingTrackResponse currentTrack = spotifyController.getCurrentlyPlayingTrack().block();
-    spotifyController.getNextTrack();
-    Mono<CurrentlyPlayingTrackResponse> nextTrackResponse = spotifyController.getCurrentlyPlayingTrack();
+    CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
+    spotifyService.getNextTrack();
+    Mono<CurrentlyPlayingTrackResponse> nextTrackResponse = spotifyService.getCurrentlyPlayingTrack();
 
     CurrentlyPlayingTrackResponse nextTrack = DelayedResponseHandler
         .handleDelayedResponse(nextTrackResponse, currentTrack).block();
@@ -82,9 +83,9 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "pt", value = "Play previous track")
   public String previousTrack() {
-    CurrentlyPlayingTrackResponse currentTrack = spotifyController.getCurrentlyPlayingTrack().block();
-    spotifyController.getPreviousTrack();
-    Mono<CurrentlyPlayingTrackResponse> previousTrackResponse = spotifyController.getCurrentlyPlayingTrack();
+    CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
+    spotifyService.getPreviousTrack();
+    Mono<CurrentlyPlayingTrackResponse> previousTrackResponse = spotifyService.getCurrentlyPlayingTrack();
 
     CurrentlyPlayingTrackResponse previousTrack = DelayedResponseHandler
         .handleDelayedResponse(previousTrackResponse, currentTrack).block();
@@ -94,7 +95,7 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "v", value = "Set volume in percent 0 - 100%")
   public String setPlaybackVolume(int volumePercent) {
-    spotifyController.setPlaybackVolume(volumePercent);
+    spotifyService.setPlaybackVolume(volumePercent);
 
     return String.format("Volume: %d%%", volumePercent);
   }
