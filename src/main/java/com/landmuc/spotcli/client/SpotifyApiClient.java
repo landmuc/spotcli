@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
+import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.AccessTokenService;
 import com.landmuc.spotcli.service.DeviceIdService;
@@ -67,12 +68,12 @@ public class SpotifyApiClient {
         .bodyToMono(String.class);
   }
 
-  public Mono<String> getCurrentlyPlayingTrack() {
+  public Mono<CurrentlyPlayingTrackResponse> getCurrentlyPlayingTrack() {
     return spotifyWebClient.get()
         .uri("https://api.spotify.com/v1/me/player/currently-playing")
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
-        .bodyToMono(String.class);
+        .bodyToMono(CurrentlyPlayingTrackResponse.class);
   }
 
   public void pauseCurrentlyPlayingTrack() {
@@ -89,12 +90,40 @@ public class SpotifyApiClient {
         .subscribe();
   }
 
+  public void resumeCurrentTrack() {
+    spotifyWebClient.put()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/play")
+            .queryParam("device_id", deviceIdService.getDeviceId())
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
+  }
+
   public void getNextTrack() {
     spotifyWebClient.post()
         .uri(uriBuilder -> uriBuilder
             .scheme("https")
             .host("api.spotify.com")
             .path("/v1/me/player/next")
+            .queryParam("device_id", deviceIdService.getDeviceId())
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
+  }
+
+  public void getPreviousTrack() {
+    spotifyWebClient.post()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/previous")
             .queryParam("device_id", deviceIdService.getDeviceId())
             .build())
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))

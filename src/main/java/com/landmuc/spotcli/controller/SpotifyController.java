@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
+import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
 import com.landmuc.spotcli.model.DeviceListResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
@@ -41,13 +42,18 @@ public class SpotifyController {
   }
 
   @GetMapping("/current-track")
-  public Mono<String> getCurrentlyPlayingTrack() {
+  public Mono<CurrentlyPlayingTrackResponse> getCurrentlyPlayingTrack() {
     return spotifyService.getCurrentlyPlayingTrack();
   }
 
-  @GetMapping("/pause-current-track")
+  @PutMapping("/pause-current-track")
   public void pauseCurrentlyPlayingTrack() {
     spotifyService.pauseCurrentlyPlayingTrack();
+  }
+
+  @PutMapping("/resume-current-track")
+  public void resumeCurrentTrack() {
+    spotifyService.resumeCurrentTrack();
   }
 
   // Should be a @PostMapping but for testing in browser needs to be @GetMapping;
@@ -55,6 +61,11 @@ public class SpotifyController {
   @PutMapping("/next-track")
   public void getNextTrack() {
     spotifyService.getNextTrack();
+  }
+
+  @PutMapping("/previous-track")
+  public void getPreviousTrack() {
+    spotifyService.getPreviousTrack();
   }
 
 }
