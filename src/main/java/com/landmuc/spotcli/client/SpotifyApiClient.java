@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
+import com.landmuc.spotcli.model.PlaybackStateResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.AccessTokenService;
 import com.landmuc.spotcli.service.DeviceIdService;
@@ -60,12 +61,12 @@ public class SpotifyApiClient {
         .bodyToMono(UserProfileResponse.class);
   }
 
-  public Mono<String> getPlaybackState() {
+  public Mono<PlaybackStateResponse> getPlaybackState() {
     return spotifyWebClient.get()
         .uri("https://api.spotify.com/v1/me/player")
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
-        .bodyToMono(String.class);
+        .bodyToMono(PlaybackStateResponse.class);
   }
 
   public Mono<CurrentlyPlayingTrackResponse> getCurrentlyPlayingTrack() {
@@ -140,6 +141,21 @@ public class SpotifyApiClient {
             .path("/v1/me/player/volume")
             .queryParam("device_id", deviceIdService.getDeviceId())
             .queryParam("volume_percent", volumePercent)
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .subscribe();
+  }
+
+  public void togglePlaybackShuffle(boolean shuffleState) {
+    spotifyWebClient.put()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/shuffle")
+            .queryParam("device_id", deviceIdService.getDeviceId())
+            .queryParam("state", shuffleState)
             .build())
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()

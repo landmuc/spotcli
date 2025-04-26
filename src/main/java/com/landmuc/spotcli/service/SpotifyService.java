@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.landmuc.spotcli.client.SpotifyApiClient;
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
+import com.landmuc.spotcli.model.PlaybackStateResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 
 import reactor.core.publisher.Mono;
@@ -27,7 +28,7 @@ public class SpotifyService {
     return spotifyApiClient.getCurrentUserInformation();
   }
 
-  public Mono<String> getPlaybackState() {
+  public Mono<PlaybackStateResponse> getPlaybackState() {
     return spotifyApiClient.getPlaybackState();
   }
 
@@ -53,6 +54,10 @@ public class SpotifyService {
 
   public void setPlaybackVolume(int volumePercent) {
     spotifyApiClient.setPlaybackVolume(volumePercent);
+  }
+
+  public void togglePlaybackState(boolean shuffleState) {
+    spotifyApiClient.togglePlaybackShuffle(shuffleState);
   }
 
 }

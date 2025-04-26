@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.landmuc.spotcli.model.ArtistResponse;
 import com.landmuc.spotcli.model.CurrentlyPlayingTrackResponse;
+import com.landmuc.spotcli.model.PlaybackStateResponse;
 import com.landmuc.spotcli.model.UserProfileResponse;
 import com.landmuc.spotcli.service.SpotifyService;
 
@@ -40,7 +41,7 @@ public class SpotifyController {
   }
 
   @GetMapping("/playback")
-  public Mono<String> getPlaybackState() {
+  public Mono<PlaybackStateResponse> getPlaybackState() {
     return spotifyService.getPlaybackState();
   }
 

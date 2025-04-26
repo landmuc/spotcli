@@ -99,4 +99,13 @@ public class SpotifyCommands {
 
     return String.format("Volume: %d%%", volumePercent);
   }
+
+  @ShellMethod(key = "sh", value = "Toggle playback shuffle")
+  public String togglePlaybackShuffle() {
+    boolean shuffleState = !spotifyService.getPlaybackState().block().shuffle_state();
+
+    spotifyService.togglePlaybackState(shuffleState);
+
+    return String.format("Shuffle: %b", shuffleState);
+  }
 }
