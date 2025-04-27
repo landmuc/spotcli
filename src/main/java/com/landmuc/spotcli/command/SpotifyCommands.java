@@ -1,5 +1,7 @@
 package com.landmuc.spotcli.command;
 
+import java.util.List;
+
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
@@ -75,6 +77,12 @@ public class SpotifyCommands {
 
     return currentTrack == null ? "No track playing right now!" : "Starting: " + currentTrack.toString();
 
+  }
+
+  @ShellMethod(key = "play", value = "Play a track, a album, a artist or a playlist by providing an id")
+  public String startNewPlayback(String keyword, String[] idArray) {
+    spotifyService.startNewPlayback(keyword, idArray);
+    return "Starts playing...";
   }
 
   @ShellMethod(key = "nt", value = "Play next track")
