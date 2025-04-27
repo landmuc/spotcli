@@ -80,7 +80,16 @@ public class SpotifyCommands {
   }
 
   @ShellMethod(key = "play", value = "Play a track, a album, a artist or a playlist by providing an id")
-  public String startNewPlayback(String keyword, String[] idArray) {
+  public String startNewPlayback(String keyword, String ids) {
+    // split the ids string by '+' or ',' or '#' characters
+    // to give the user some options for convenience
+    String[] idArray = ids.split("[,+#]");
+
+    // trim each id to remove any potential whitespace
+    for (int i = 0; i < idArray.length; i++) {
+      idArray[i] = idArray[i].trim();
+    }
+
     spotifyService.startNewPlayback(keyword, idArray);
     return "Starts playing...";
   }

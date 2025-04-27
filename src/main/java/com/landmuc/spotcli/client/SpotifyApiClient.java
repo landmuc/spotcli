@@ -119,7 +119,6 @@ public class SpotifyApiClient {
         .subscribe();
   }
 
-  // could also support list of uris, but for now supports only single uris
   public void startNewPlayback(String keyword, String[] idArray) {
     NewPlaybackKeyword newPlaybackKeyword;
     String firstElement = idArray[0];
@@ -146,6 +145,7 @@ public class SpotifyApiClient {
         urisArray[iter] = String.format("spotify:track:%s", id);
         iter++;
       }
+      String[] test = { "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M" };
       arrayMap.put("uris", urisArray);
     } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.ALBUM)) {
       singleStringMap.put("context_uri", String.format("spotify:album:%s", firstElement));
