@@ -137,4 +137,12 @@ public class SpotifyCommands {
 
     return String.format("Shuffle: %b", shuffleState);
   }
+
+  @ShellMethod(key = "add", value = "Add item to queue")
+  public String addItemtoPlaybackQueue(String itemId) {
+
+    spotifyService.addItemToPlaybackQueue(itemId);
+
+    return "Item added to queue";
+  }
 }

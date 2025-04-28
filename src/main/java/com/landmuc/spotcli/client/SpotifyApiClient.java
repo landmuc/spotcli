@@ -240,4 +240,20 @@ public class SpotifyApiClient {
         .block();
   }
 
+  // could also add episode items BUT NOT RIGHT NOW! > do it with a keyword
+  public void addItemToPlaybackQueue(String itemId) {
+    spotifyWebClient.post()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.spotify.com")
+            .path("/v1/me/player/queue")
+            .queryParam("device_id", deviceIdService.getDeviceId())
+            .queryParam("uri", String.format("spotify:track:%s", itemId))
+            .build())
+        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+        .retrieve()
+        .bodyToMono(Void.class)
+        .block();
+  }
+
 }

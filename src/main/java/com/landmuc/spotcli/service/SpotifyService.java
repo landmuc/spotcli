@@ -69,4 +69,8 @@ public class SpotifyService {
     spotifyApiClient.togglePlaybackShuffle(shuffleState);
   }
 
+  public void addItemToPlaybackQueue(String itemId) {
+    spotifyApiClient.addItemToPlaybackQueue(itemId);
+  }
+
 }
