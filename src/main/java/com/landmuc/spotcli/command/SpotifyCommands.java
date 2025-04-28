@@ -1,7 +1,5 @@
 package com.landmuc.spotcli.command;
 
-import java.util.List;
-
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
@@ -73,6 +71,7 @@ public class SpotifyCommands {
   @ShellMethod(key = "s", value = "Start or resume current track")
   public String resumeCurrentTrack() {
     spotifyService.resumeCurrentTrack();
+    // TODO: Why not use .block() in the actual api request?
     CurrentlyPlayingTrackResponse currentTrack = spotifyService.getCurrentlyPlayingTrack().block();
 
     return currentTrack == null ? "No track playing right now!" : "Starting: " + currentTrack.toString();
@@ -120,6 +119,11 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "v", value = "Set volume in percent 0 - 100%")
   public String setPlaybackVolume(int volumePercent) {
+
+    if (volumePercent < 0 || volumePercent > 100) {
+      System.err.println("Invalid volume percentage, got: " + volumePercent);
+      return "Volume must be between 0 and 100!";
+    }
     spotifyService.setPlaybackVolume(volumePercent);
 
     return String.format("Volume: %d%%", volumePercent);

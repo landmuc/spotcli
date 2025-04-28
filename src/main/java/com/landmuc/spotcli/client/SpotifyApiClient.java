@@ -1,7 +1,6 @@
 package com.landmuc.spotcli.client;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.landmuc.spotcli.domain.NewPlaybackKeyword;
 import com.landmuc.spotcli.model.ArtistResponse;
@@ -102,7 +103,7 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(Void.class)
-        .subscribe();
+        .block();
   }
 
   public void resumeCurrentTrack() {
@@ -116,57 +117,62 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(Void.class)
-        .subscribe();
+        .block();
   }
 
   public void startNewPlayback(String keyword, String[] idArray) {
-    NewPlaybackKeyword newPlaybackKeyword;
-    String firstElement = idArray[0];
+    try {
+      NewPlaybackKeyword newPlaybackKeyword;
+      String firstElement = idArray[0];
 
-    // should handle else case with a error message I but leave it like this for now
-    if (keyword.toLowerCase().trim().equals("track")) {
-      newPlaybackKeyword = NewPlaybackKeyword.TRACK;
-    } else if (keyword.toLowerCase().trim().equals("album")) {
-      newPlaybackKeyword = NewPlaybackKeyword.ALBUM;
-    } else if (keyword.toLowerCase().trim().equals("artist")) {
-      newPlaybackKeyword = NewPlaybackKeyword.ARTIST;
-    } else if (keyword.toLowerCase().trim().equals("playlist")) {
-      newPlaybackKeyword = NewPlaybackKeyword.PLAYLIST;
-    } else {
-      newPlaybackKeyword = NewPlaybackKeyword.TRACK;
-    }
-
-    Map<String, String> singleStringMap = new HashMap<>();
-    Map<String, String[]> arrayMap = new HashMap<>();
-    if (newPlaybackKeyword.equals(NewPlaybackKeyword.TRACK)) {
-      String[] urisArray = new String[idArray.length];
-      int iter = 0;
-      for (String id : idArray) {
-        urisArray[iter] = String.format("spotify:track:%s", id);
-        iter++;
+      // should handle else case with a error message I but leave it like this for now
+      if (keyword.toLowerCase().trim().equals("track")) {
+        newPlaybackKeyword = NewPlaybackKeyword.TRACK;
+      } else if (keyword.toLowerCase().trim().equals("album")) {
+        newPlaybackKeyword = NewPlaybackKeyword.ALBUM;
+      } else if (keyword.toLowerCase().trim().equals("artist")) {
+        newPlaybackKeyword = NewPlaybackKeyword.ARTIST;
+      } else if (keyword.toLowerCase().trim().equals("playlist")) {
+        newPlaybackKeyword = NewPlaybackKeyword.PLAYLIST;
+      } else {
+        newPlaybackKeyword = NewPlaybackKeyword.TRACK;
       }
-      String[] test = { "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M" };
-      arrayMap.put("uris", urisArray);
-    } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.ALBUM)) {
-      singleStringMap.put("context_uri", String.format("spotify:album:%s", firstElement));
-    } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.ARTIST)) {
-      singleStringMap.put("context_uri", String.format("spotify:artist:%s", firstElement));
-    } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.PLAYLIST)) {
-      singleStringMap.put("context_uri", String.format("spotify:playlist:%s", firstElement));
-    }
 
-    spotifyWebClient.put()
-        .uri(uriBuilder -> uriBuilder
-            .scheme("https")
-            .host("api.spotify.com")
-            .path("/v1/me/player/play")
-            .queryParam("device_id", deviceIdService.getDeviceId())
-            .build())
-        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
-        .bodyValue((newPlaybackKeyword.equals(NewPlaybackKeyword.TRACK) ? arrayMap : singleStringMap))
-        .retrieve()
-        .bodyToMono(Void.class)
-        .subscribe();
+      Map<String, String> singleStringMap = new HashMap<>();
+      Map<String, String[]> arrayMap = new HashMap<>();
+      if (newPlaybackKeyword.equals(NewPlaybackKeyword.TRACK)) {
+        String[] urisArray = new String[idArray.length];
+        int iter = 0;
+        for (String id : idArray) {
+          urisArray[iter] = String.format("spotify:track:%s", id);
+          iter++;
+        }
+        arrayMap.put("uris", urisArray);
+      } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.ALBUM)) {
+        singleStringMap.put("context_uri", String.format("spotify:album:%s", firstElement));
+      } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.ARTIST)) {
+        singleStringMap.put("context_uri", String.format("spotify:artist:%s", firstElement));
+      } else if (newPlaybackKeyword.equals(NewPlaybackKeyword.PLAYLIST)) {
+        singleStringMap.put("context_uri", String.format("spotify:playlist:%s", firstElement));
+      }
+
+      spotifyWebClient.put()
+          .uri(uriBuilder -> uriBuilder
+              .scheme("https")
+              .host("api.spotify.com")
+              .path("/v1/me/player/play")
+              .queryParam("device_id", deviceIdService.getDeviceId())
+              .build())
+          .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+          .bodyValue((newPlaybackKeyword.equals(NewPlaybackKeyword.TRACK) ? arrayMap : singleStringMap))
+          .retrieve()
+          .bodyToMono(Void.class)
+          .block();
+    } catch (WebClientResponseException.BadRequest e) {
+      System.err.println("Invalid id provided: " + e.getMessage());
+    } catch (Exception e) {
+      System.err.println("Oh no! An error happend: " + e.getMessage());
+    }
   }
 
   public void getNextTrack() {
@@ -180,7 +186,7 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(Void.class)
-        .subscribe();
+        .block();
   }
 
   public void getPreviousTrack() {
@@ -194,22 +200,29 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(Void.class)
-        .subscribe();
+        .block();
   }
 
   public void setPlaybackVolume(int volumePercent) {
-    spotifyWebClient.put()
-        .uri(uriBuilder -> uriBuilder
-            .scheme("https")
-            .host("api.spotify.com")
-            .path("/v1/me/player/volume")
-            .queryParam("device_id", deviceIdService.getDeviceId())
-            .queryParam("volume_percent", volumePercent)
-            .build())
-        .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
-        .retrieve()
-        .bodyToMono(Void.class)
-        .subscribe();
+    try {
+
+      spotifyWebClient.put()
+          .uri(uriBuilder -> uriBuilder
+              .scheme("https")
+              .host("api.spotify.com")
+              .path("/v1/me/player/volume")
+              .queryParam("device_id", deviceIdService.getDeviceId())
+              .queryParam("volume_percent", volumePercent)
+              .build())
+          .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
+          .retrieve()
+          .bodyToMono(Void.class)
+          .block();
+    } catch (NumberFormatException e) {
+      System.err.println("Invalid volume value! Use a number between 0 - 100! " + e.getMessage());
+    } catch (Exception e) {
+      System.err.println("Oh no! An error happend: " + e.getMessage());
+    }
   }
 
   public void togglePlaybackShuffle(boolean shuffleState) {
@@ -224,7 +237,7 @@ public class SpotifyApiClient {
         .headers(headers -> headers.setBearerAuth(accessTokenService.getAccessTokenResponse().access_token()))
         .retrieve()
         .bodyToMono(Void.class)
-        .subscribe();
+        .block();
   }
 
 }
