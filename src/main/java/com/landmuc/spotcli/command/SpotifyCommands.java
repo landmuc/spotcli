@@ -1,5 +1,7 @@
 package com.landmuc.spotcli.command;
 
+import java.util.List;
+
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
@@ -140,9 +142,14 @@ public class SpotifyCommands {
 
   @ShellMethod(key = "add", value = "Add item to queue")
   public String addItemtoPlaybackQueue(String itemId) {
-
     spotifyService.addItemToPlaybackQueue(itemId);
-
     return "Item added to queue";
+  }
+
+  @ShellMethod(key = "ss", value = "Search")
+  public String search(String searchTypeString, String searchString) {
+    String[] searchType = searchTypeString.split(",");
+
+    return spotifyService.search(searchType, searchString).block();
   }
 }

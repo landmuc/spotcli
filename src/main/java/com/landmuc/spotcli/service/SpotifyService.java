@@ -1,5 +1,7 @@
 package com.landmuc.spotcli.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,6 +73,10 @@ public class SpotifyService {
 
   public void addItemToPlaybackQueue(String itemId) {
     spotifyApiClient.addItemToPlaybackQueue(itemId);
+  }
+
+  public Mono<String> search(String[] searchType, String searchString) {
+    return spotifyApiClient.search(searchType, searchString);
   }
 
 }

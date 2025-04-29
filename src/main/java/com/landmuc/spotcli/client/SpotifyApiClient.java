@@ -1,6 +1,7 @@
 package com.landmuc.spotcli.client;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.landmuc.spotcli.domain.NewPlaybackKeyword;
@@ -254,6 +254,22 @@ public class SpotifyApiClient {
         .retrieve()
         .bodyToMono(Void.class)
         .block();
+  }
+
+  public Mono<String> search(String[] searchType, String searchString) {
+    return spotifyAuthService.getBearerToken()
+        .flatMap(token -> spotifyWebClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .scheme("https")
+                .host("api.spotify.com")
+                .path("/v1/search")
+                .queryParam("q", searchString)
+                .queryParam("type", searchType)
+                // .queryParam("limit", 20)
+                .build())
+            .headers(headers -> headers.setBearerAuth(token.access_token()))
+            .retrieve()
+            .bodyToMono(String.class));
   }
 
 }
