@@ -11,6 +11,20 @@ record AudiobookSearchResponse(
     Integer total,
     List<AudiobookItem> items) {
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (AudiobookItem item : items) {
+            sb.append(String.format("%s - '%s' by %s: %s%n",
+                item.name(),
+                item.publisher(),
+                item.authors().get(0).name(),
+                item.id()));
+        }
+        return sb.toString();
+    }
+
   // Record for items in the search response
   record AudiobookItem(
       List<Author> authors,

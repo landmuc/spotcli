@@ -11,6 +11,26 @@ public record EpisodeSearchResponse(
     Integer total,
     List<EpisodeItem> items) {
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (EpisodeItem item : items) {
+            sb.append(String.format("%s - '%s' duration: %s%n",
+                item.name(),
+                item.description(),
+                formatDuration(item.duration_ms())));
+        }
+        return sb.toString();
+    }
+
+    private String formatDuration(Integer durationMs) {
+        int seconds = durationMs / 1000;
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        return String.format("%d:%02d", minutes, seconds);
+    }
+
   // Record for items in the search response
   record EpisodeItem(
       String audio_preview_url,

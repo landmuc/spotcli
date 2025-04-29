@@ -11,6 +11,20 @@ record AlbumSearchResponse(
     Integer total,
     List<AlbumItem> items) {
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (AlbumItem item : items) {
+            sb.append(String.format("%s - '%s' by %s: %s%n",
+                item.name(),
+                item.album_type(),
+                item.artists().get(0).name(),
+                item.id()));
+        }
+        return sb.toString();
+    }
+
   // Record for items in the search response
   record AlbumItem(
       String album_type,

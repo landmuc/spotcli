@@ -11,6 +11,20 @@ record ArtistSearchResponse(
     Integer total,
     List<ArtistItem> items) {
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (ArtistItem item : items) {
+            sb.append(String.format("%s - '%s' followers: %s: %s%n",
+                item.name(),
+                item.genres().isEmpty() ? "No genres" : item.genres().get(0),
+                item.followers().total(),
+                item.id()));
+        }
+        return sb.toString();
+    }
+
   // Record for items in the search response
   record ArtistItem(
       ExternalUrls external_urls,

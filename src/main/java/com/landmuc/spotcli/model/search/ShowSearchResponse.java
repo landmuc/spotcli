@@ -11,6 +11,20 @@ record ShowSearchResponse(
     Integer total,
     List<ShowItem> items) {
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (ShowItem item : items) {
+            sb.append(String.format("%s - '%s' episodes: %s: %s%n",
+                item.name(),
+                item.publisher(),
+                item.total_episodes(),
+                item.id()));
+        }
+        return sb.toString();
+    }
+
   // Record for items in the search response
   record ShowItem(
       List<String> available_markets,

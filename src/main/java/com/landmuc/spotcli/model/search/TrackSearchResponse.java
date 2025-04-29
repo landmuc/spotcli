@@ -1,7 +1,6 @@
 package com.landmuc.spotcli.model.search;
 
 import java.util.List;
-import java.util.Map;
 
 record TrackSearchResponse(
     String href,
@@ -11,6 +10,20 @@ record TrackSearchResponse(
     String previous,
     Integer total,
     List<TrackItem> items) {
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Total results: %d%n", total));
+        for (TrackItem item : items) {
+            sb.append(String.format("%s - '%s' by %s: %s%n",
+                item.name(),
+                item.album().name(),
+                item.artists().get(0).name(),
+                item.id()));
+        }
+        return sb.toString();
+    }
 
   // Record for items in the search response
   record TrackItem(
